@@ -26,7 +26,7 @@ export default {
     return {
       formData:{  //表单中用户输入的两个数据
         aname:'admin',
-        apwd:'666666'
+        apwd:'123456'
       }
     }
   },

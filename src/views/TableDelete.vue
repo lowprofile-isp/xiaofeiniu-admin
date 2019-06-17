@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
-    <h1>TableDelete</h1>
+  <div>
+    <h1>删除桌台</h1>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
-    <h1>CategoryList</h1>
+  <div>
+    <h1>菜品类别</h1>
   </div>
 </template>

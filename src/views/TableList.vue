@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
-    <h1>TableList</h1>
+  <div>
+    <h1>桌台列表</h1>
   </div>
 </template>
