@@ -23,8 +23,28 @@ export default {
 }
 </script>
 <style lang="scss">
+  *{margin: 0;padding: 0;}
   #app {
     color: #303133;
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   }
+  .main{
+    padding: 20px;
+  }
+  .el-message-box__input {
+    padding-top: 12px !important;
+  }
+  .el-icon-info+.el-message-box__message{
+    padding-left: 0 !important;
+  }
+  .el-message{
+    background-color: #C0C4CC !important; 
+  }
+  .el-message__content{
+    color: #fff !important;
+    letter-spacing: 2px;
+  }
+  // .el-col .el-col-24{
+  //   padding: 3px;
+  // }
 </style>
