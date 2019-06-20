@@ -13,7 +13,8 @@ export default {
   methods: {
 		quit(){
 			//清除当前用户的登录信息
-			this.$store.commit('setAdminName','')
+      // this.$store.commit('setAdminName','')
+      sessionStorage.removeItem('userName')
 			//跳转回登录页
 			this.$router.push('/login');
 		}

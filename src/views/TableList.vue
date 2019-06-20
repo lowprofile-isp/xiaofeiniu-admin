@@ -7,7 +7,7 @@
     </el-breadcrumb>
     <br>
     <el-row>
-      <el-col v-for="(t,i) in tableList" :key="i" :xs="12" :sm="8" :md="6" :lg="4" :xl="2">
+      <el-col v-for="(t,i) in tableList" :key="i" :xs="12" :sm="8" :md="6" :lg="4" :xl="3">
         <xfn-table :data="t"></xfn-table>
       </el-col>
     </el-row>

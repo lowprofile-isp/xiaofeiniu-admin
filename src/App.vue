@@ -9,12 +9,18 @@
 // https://github.com/Lccitem/xiaofeiniu-api.git
 // https://github.com/Lccitem/xiaofeiniu-app.git
 export default {
+  beforeMount(){
+    if(sessionStorage.getItem('userName')){
+      this.$store.commit('setAdminName',sessionStorage.getItem('userName'))
+    }else{
+      this.$store.commit('setAdminName',null)
+    }
+  },
   mounted() {
     console.log('APP mounted...')
     //当前组件挂载完成后需要异步请求全局配置数据
     var url = this.$store.state.globalSettings.apiUrl+'/admin/settings';
     this.$axios.get(url).then((res)=>{
-      console.log(res)
       this.$store.commit('setGlobalSettings',res.data);
     }).catch((err)=>{
       console.log(err)
@@ -26,7 +32,8 @@ export default {
   *{margin: 0;padding: 0;}
   #app {
     color: #303133;
-    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+    // font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+    font-family: "Microsoft YaHei";
   }
   .main{
     padding: 20px;
