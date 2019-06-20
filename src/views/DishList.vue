@@ -27,7 +27,6 @@ export default {
   mounted(){
     var url = this.$store.state.globalSettings.apiUrl+'/admin/dish';
     this.$axios.get(url).then(({data})=>{
-      console.log(data)
       this.dishList = data;
     }).catch(error=>{
       console.log(error)
