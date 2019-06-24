@@ -26,7 +26,7 @@
 export default {
   data() {
     return {
-      formData:{
+      formData: {
         dishInfo: ""
       },
       rules: {
@@ -40,21 +40,52 @@ export default {
       }
     };
   },
-  methods:{
-    deleteDish(formName){
+  methods: {
+    deleteDish(formName) {
       this.$refs[formName].validate(valid => {
-        if(valid){
-          var url = this.$store.state.globalSettings.apiUrl+'/admin/dish';
-          this.$axios.delete(url,{'disInfo':this.dishInfo}).then(({data})=>{
-            console.log(data)
-          }).catch(error=>{
-            console.log(error);
+        if (valid) {
+          this.$confirm("您确定要删除此菜品吗?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+            center: true
           })
-        }else {
-          this.$message.error("删除菜品失败！");
+            .then(() => {
+              var url =
+                this.$store.state.globalSettings.apiUrl +
+                "/admin/dish/" +
+                this.formData.dishInfo;
+              this.$axios
+                .delete(url)
+                .then(({ data }) => {
+                  console.log(data)
+                  if (data.code == 200) {
+                    this.$message({
+                      type: "success",
+                      message: "删除成功!"
+                    });
+                  } else {
+                    this.$message({
+                      message: "没有此菜品!请核对菜品！",
+                      type: "error"
+                    });
+                  }
+                })
+                .catch(error => {
+                  console.log(error);
+                });
+            })
+            .catch(() => {
+              this.$message({
+                type: "info",
+                message: "已取消删除"
+              });
+            });
+        } else {
+          this.$message.error("删除菜品失败！请输入正确菜品！");
           return false;
         }
-      })
+      });
     }
   }
 };
