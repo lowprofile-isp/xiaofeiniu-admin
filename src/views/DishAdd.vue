@@ -142,29 +142,8 @@ export default {
 
 <style lang="scss">
 .xfn-dish-add {
-  .xfn-uploader {
-    .el-upload {
-      border: 1px dashed #d9d9d9;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 218px;
-      height: 154px;
-      overflow: hidden;
-      &:hover {
-        border-color: #409eff;
-      }
-      .avatar-uploader-icon {
-        font-size: 28px;
-        color: #8c939d;
-        width: 178px;
-        height: 154px;
-        line-height: 154px;
-        text-align: center;
-      }
-    }
-  }
-  img {
-    max-width: 100%;
+  img{
+    height: 100%;
   }
 }
 </style>
