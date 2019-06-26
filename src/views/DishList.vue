@@ -1,5 +1,10 @@
 <template>
   <div class="xfn-dish-list">
+    <el-breadcrumb>
+      <el-breadcrumb-item to="/main">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>菜品类别管理</el-breadcrumb-item>
+      <el-breadcrumb-item>菜品列表</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-tabs type="border-card">
       <el-tab-pane v-for="(c,i) in dishList" :key="i">
         <span slot="label">
@@ -14,7 +19,7 @@
                 <span>￥:{{d.price}}</span>
               </div>
               <h4 v-else>{{d.title}}</h4>
-              <img :src="require('../../../xiaofeiniu-api/img/dish/'+d.imgUrl)">
+              <img ref="img" :src="require('../../../xiaofeiniu-api/img/dish/'+d.imgUrl)">
             </div>
           </el-col>
         </el-row>
@@ -46,7 +51,6 @@ export default {
     showDishDetail(index) {
       this.ishow = true;
       this.current = index;
-      console.log(index);
     },
     hideDishDetail() {
       this.ishow = true;

@@ -161,7 +161,7 @@ export default {
               this.formInfos.price = data.infos.price;
               this.formInfos.detail = data.infos.detail;
               this.formInfos.imgUrl = data.infos.imgUrl;
-              this.imageUrl = require("../assets/img/"+data.infos.imgUrl);
+              this.imageUrl = require("../../../xiaofeiniu-api/img/dish/"+data.infos.imgUrl);
               this.radio1 = data.infos.categoryId - 1;
             } else {
               this.$message({

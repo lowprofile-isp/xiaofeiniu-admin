@@ -1,6 +1,10 @@
 <template>
   <div class="xfn-dish-add">
-    <h1>添加菜品</h1>
+    <el-breadcrumb>
+      <el-breadcrumb-item to="/main">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>菜品类别管理</el-breadcrumb-item>
+      <el-breadcrumb-item>添加菜品</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-form label-width="100px" ref="formData" :rules="rules" :model="formData">
       <el-form-item label="菜品图片" prop="imgUrl">
         <el-upload

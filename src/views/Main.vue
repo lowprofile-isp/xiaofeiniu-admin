@@ -82,7 +82,6 @@ export default {
       }else{
         return []
       }
-      // return ['table']
     }
   },
   beforeCreate(){
