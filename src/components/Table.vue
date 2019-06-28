@@ -88,14 +88,14 @@
     >
       <el-form :model="reservationList" :rules="rules1" ref="tableForm">
         <el-form-item label="桌台状态：">
-          <el-radio-group v-model="tableChildList.status">
+          <el-radio-group v-model="radio1">
             <el-radio :label="1" border>空闲</el-radio>
             <el-radio :label="2" border>预定</el-radio>
             <el-radio :label="3" border>占用</el-radio>
             <el-radio :label="4" border>其他</el-radio>
           </el-radio-group>
         </el-form-item>
-        <div v-if="tableChildList.status == '2'">
+        <div v-if="radio1 == '2'">
           <el-form-item  prop="dinnerTime" label="预定时间：">
             <el-date-picker v-model="reservationList.dinnerTime" type="datetime" placeholder="选择日期时间">{{reservationList.dinnerTime | datetime}}</el-date-picker>
           </el-form-item>
@@ -109,8 +109,8 @@
             <el-input v-model="reservationList.phone" placeholder="预约人联系电话"></el-input>
           </el-form-item>
         </div>
-        <el-form :model="orderList" v-if="tableChildList.status == '3'" :rules="rules1" ref="tableForm">
-          <el-form-item  prop="dinnerTime" label="用餐时间：">
+        <el-form :model="orderList" v-if="radio1 == '3'" :rules="rules2" ref="tableForm2">
+          <el-form-item  prop="startTime" label="用餐时间：">
             <el-date-picker v-model="orderList.startTime" type="datetime" placeholder="选择日期时间">{{orderList.startTime | datetime}}</el-date-picker>
           </el-form-item>
           <el-form-item label="用餐人数：" prop="customerCount" >
@@ -118,7 +118,7 @@
           </el-form-item>
         </el-form>
         <el-form-item>
-          <el-button type="primary" @click="updatePost(tableChildList.status,'tableForm')">确 定</el-button>
+          <el-button type="primary" @click="updatePost(radio1,'tableForm','tableForm2')">确 定</el-button>
           <el-button  @click="closeForm">取 消</el-button>
         </el-form-item>
       </el-form>
@@ -130,7 +130,18 @@ import { error } from "util";
 import { type } from 'os';
 export default {
   data() {
+    var phone = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("手机号不能为空"));
+      }
+      let phone_tes = /^1[34578]\d{9}$/;
+      if(!phone_tes.test(value)){
+        return callback(new Error('请输入正确手机号'));
+      }
+      callback();
+    };
     return {
+      radio1:1,
       yuding: false,
       zhanyong: false,
       qita: false,
@@ -166,12 +177,21 @@ export default {
             { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
           ],
           phone: [
-            { required: true, message: '请填写正确手机号', trigger: 'blur' },
-            { min: 11, max:11 , message: '手机号不得超过11位', trigger: 'blur' }
+            { required: true,validator: phone,trigger: 'blur' },
           ],
           customerCount: [
             { required: true, message: '请填写用餐人数', trigger: 'blur' },
             { min: 1, max: 20 ,type:'number', message: '用餐人必须是1-20位，且必须填写数字', trigger: 'blur' }
+          ],
+         
+      },
+      rules2:{
+         customerCount: [
+            { required: true, message: '请填写用餐人数', trigger: 'blur' },
+            { min: 1, max: 20 ,type:'number', message: '用餐人必须是1-20位，且必须填写数字', trigger: 'blur' }
+          ],
+          startTime: [
+            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
           ],
       }
     };
@@ -267,7 +287,7 @@ export default {
       this.dialogVisible = true;
     },
     // 修改桌台
-    updatePost($status,formName){
+    updatePost($status,formName,formName2){
       this.reservationList.contactTime = this.newTime;
       this.reservationList.dinnerTime = Number(this.reservationList.dinnerTime);
       this.reservationList.tableId = this.tableChildList.tid;
@@ -277,6 +297,8 @@ export default {
         var url = this.$store.state.globalSettings.apiUrl+'/admin/table/'+this.tableChildList.tid;
         this.$axios.delete(url).then(({data})=>{
           if(data.order.code == 200 || data.reservation.code == 200){
+            this.tableChildList.status = 1;
+            this.dialogVisible = false;
             this.$alert("桌台修改成功！", {
                   confirmButtonText: "确定",
                   callback: action => {
@@ -294,11 +316,14 @@ export default {
         })
       }
       if($status == 2){
+        console.log(this.reservationList)
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            console.log(1)
             var url = this.$store.state.globalSettings.apiUrl+'/admin/table/reservation/'+this.tableChildList.tid;
             this.$axios.put(url,this.reservationList).then(({data})=>{
               if(data.code == 200){
+                this.tableChildList.status = 2;
                 this.dialogVisible = false;
                 this.$alert("桌台修改成功！", {
                   confirmButtonText: "确定",
@@ -306,7 +331,6 @@ export default {
                     this.$message({
                       type: "info"
                     });
-                    this.$router.go(0);
                   }
                 });
               }else{
@@ -323,11 +347,12 @@ export default {
         
       }
       if($status == 3){
-        this.$refs[formName].validate((valid) => {
+        this.$refs[formName2].validate((valid) => {
           if (valid) {
             var url = this.$store.state.globalSettings.apiUrl+'/admin/table/order/'+this.tableChildList.tid;
             this.$axios.put(url,this.orderList).then(({data})=>{
               if(data.code == 200){
+                this.tableChildList.status = 3;
                 this.dialogVisible = false;
                 this.$alert("桌台修改成功！", {
                   confirmButtonText: "确定",
@@ -356,7 +381,7 @@ export default {
     closeForm(){
       this.dialogVisible=false;
       this.$refs['tableForm'].resetFields();
-      this.$router.go(0);
+      // this.$router.go(0);
       // this.tableChildList.status = this.data.status;
       // console.log(this.initialTableList)
       // console.log(this.tableChildList)
