@@ -39,7 +39,7 @@
                 <el-tag type="info">{{reservationList.dinnerTime | datetime}}</el-tag>
               </el-form-item>
             </div>
-            <!-- <div v-if="zhanyong">
+            <div v-if="zhanyong">
               <el-form-item label="桌台名称：">
                 <el-tag type="info">{{tableChildList.tname}}</el-tag>
               </el-form-item>
@@ -50,7 +50,7 @@
                 <el-tag type="info">{{orderList.customerCount}}人</el-tag>
               </el-form-item>
               <el-form-item label="下单人：">
-                <el-tag type="info">{{orderDetail[0].contactName}}</el-tag>
+                <el-tag type="info">{{orderDetail[0].customerName}}</el-tag>
               </el-form-item>
               <el-form-item label="用餐时间：">
                 <el-tag type="info">{{orderList.startTime | datetime}}</el-tag>
@@ -65,14 +65,14 @@
                   </el-col>
                 </el-row>
               </el-form-item>
-            </div>-->
+            </div>
             <div v-if="qita">
               <p>{{qitaInfo}}</p>
             </div>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="桌台二维码">
-          <img :src="qrcodeData">
+          <img :src="qrcodeData" />
           <p>提示：请将此二维码打印于对应桌台；顾客扫码即可点餐</p>
         </el-tab-pane>
       </el-tabs>
@@ -82,10 +82,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog
-      :title="tableChildList.tid+'桌状态修改'"
-      :visible.sync="dialogVisible"
-    >
+    <el-dialog :title="tableChildList.tid+'桌状态修改'" :visible.sync="dialogVisible">
       <el-form :model="reservationList" :rules="rules1" ref="tableForm">
         <el-form-item label="桌台状态：">
           <el-radio-group v-model="radio1">
@@ -96,13 +93,17 @@
           </el-radio-group>
         </el-form-item>
         <div v-if="radio1 == '2'">
-          <el-form-item  prop="dinnerTime" label="预定时间：">
-            <el-date-picker v-model="reservationList.dinnerTime" type="datetime" placeholder="选择日期时间">{{reservationList.dinnerTime | datetime}}</el-date-picker>
+          <el-form-item prop="dinnerTime" label="预定时间：">
+            <el-date-picker
+              v-model="reservationList.dinnerTime"
+              type="datetime"
+              placeholder="选择日期时间"
+            >{{reservationList.dinnerTime | datetime}}</el-date-picker>
           </el-form-item>
-          <el-form-item label="预约人：" prop="contactName" >
+          <el-form-item label="预约人：" prop="contactName">
             <el-input v-model="reservationList.contactName" placeholder="预约联系人"></el-input>
           </el-form-item>
-          <el-form-item label="用餐人数：" prop="customerCount" >
+          <el-form-item label="用餐人数：" prop="customerCount">
             <el-input v-model.number="reservationList.customerCount" placeholder="用餐人数"></el-input>
           </el-form-item>
           <el-form-item label="联系电话：" prop="phone">
@@ -110,16 +111,20 @@
           </el-form-item>
         </div>
         <el-form :model="orderList" v-if="radio1 == '3'" :rules="rules2" ref="tableForm2">
-          <el-form-item  prop="startTime" label="用餐时间：">
-            <el-date-picker v-model="orderList.startTime" type="datetime" placeholder="选择日期时间">{{orderList.startTime | datetime}}</el-date-picker>
+          <el-form-item prop="startTime" label="用餐时间：">
+            <el-date-picker
+              v-model="orderList.startTime"
+              type="datetime"
+              placeholder="选择日期时间"
+            >{{orderList.startTime | datetime}}</el-date-picker>
           </el-form-item>
-          <el-form-item label="用餐人数：" prop="customerCount" >
+          <el-form-item label="用餐人数：" prop="customerCount">
             <el-input v-model.number="orderList.customerCount" placeholder="用餐人数"></el-input>
           </el-form-item>
         </el-form>
         <el-form-item>
           <el-button type="primary" @click="updatePost(radio1,'tableForm','tableForm2')">确 定</el-button>
-          <el-button  @click="closeForm">取 消</el-button>
+          <el-button @click="closeForm">取 消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -127,7 +132,7 @@
 </template>
 <script>
 import { error } from "util";
-import { type } from 'os';
+import { type } from "os";
 export default {
   data() {
     var phone = (rule, value, callback) => {
@@ -135,13 +140,13 @@ export default {
         return callback(new Error("手机号不能为空"));
       }
       let phone_tes = /^1[34578]\d{9}$/;
-      if(!phone_tes.test(value)){
-        return callback(new Error('请输入正确手机号'));
+      if (!phone_tes.test(value)) {
+        return callback(new Error("请输入正确手机号"));
       }
       callback();
     };
     return {
-      radio1:1,
+      radio1: 1,
       yuding: false,
       zhanyong: false,
       qita: false,
@@ -151,52 +156,72 @@ export default {
       qrcodeData: "",
       tableChildList: this.data,
       reservationList: {
-        rid:null,
-        contactName:'',
-        phone:'',
-        customerCount:'',
-        contactTime:'',
-        dinnerTime:'',
-        tableId:''
+        rid: null,
+        contactName: "",
+        phone: "",
+        customerCount: "",
+        contactTime: "",
+        dinnerTime: "",
+        tableId: ""
       },
       orderList: {
-        oid:null,
-        startTime:'',
-        endTime:'',
-        customerCount:'',
-        tableId:''
+        oid: null,
+        startTime: "",
+        endTime: "",
+        customerCount: "",
+        tableId: ""
       },
       orderDetail: [],
-      newTime:'',
+      newTime: "",
       rules1: {
         dinnerTime: [
-            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-          ],
+          {
+            type: "date",
+            required: true,
+            message: "请选择日期",
+            trigger: "change"
+          }
+        ],
         contactName: [
-            { required: true, message: '请填写预约人名称', trigger: 'blur' },
-            { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
-          ],
-          phone: [
-            { required: true,validator: phone,trigger: 'blur' },
-          ],
-          customerCount: [
-            { required: true, message: '请填写用餐人数', trigger: 'blur' },
-            { min: 1, max: 20 ,type:'number', message: '用餐人必须是1-20位，且必须填写数字', trigger: 'blur' }
-          ],
-         
+          { required: true, message: "请填写预约人名称", trigger: "blur" },
+          { min: 1, max: 5, message: "长度在 1 到 5 个字符", trigger: "blur" }
+        ],
+        phone: [{ required: true, validator: phone, trigger: "blur" }],
+        customerCount: [
+          { required: true, message: "请填写用餐人数", trigger: "blur" },
+          {
+            min: 1,
+            max: 20,
+            type: "number",
+            message: "用餐人必须是1-20位，且必须填写数字",
+            trigger: "blur"
+          }
+        ]
       },
-      rules2:{
-         customerCount: [
-            { required: true, message: '请填写用餐人数', trigger: 'blur' },
-            { min: 1, max: 20 ,type:'number', message: '用餐人必须是1-20位，且必须填写数字', trigger: 'blur' }
-          ],
-          startTime: [
-            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-          ],
+      rules2: {
+        customerCount: [
+          { required: true, message: "请填写用餐人数", trigger: "blur" },
+          {
+            min: 1,
+            max: 20,
+            type: "number",
+            message: "用餐人必须是1-20位，且必须填写数字",
+            trigger: "blur"
+          }
+        ],
+        startTime: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择日期",
+            trigger: "change"
+          }
+        ]
       }
     };
   },
   mounted() {
+
   },
   methods: {
     // 根据status返回不同的颜色值
@@ -260,13 +285,12 @@ export default {
         this.$axios
           .get(url)
           .then(({ data }) => {
-            // this.orderList = data.order;
-            // this.orderDetail = data.order_detail;
-            // console.log(this.orderList.customerCount);
-            // console.log(this.reservationList[0].contactName);
-            // this.orderList.oid = data.order.oid;
-            // this.orderList.startTime = data.order.startTime;
-            // this.orderList.customerCount = data.order.customerCount;
+            this.orderList.startTime = data.order.startTime;
+            this.orderList.endTime = data.order.endTime;
+            this.orderList.tableId = data.order.tableId;
+            this.orderList.customerCount = data.order.customerCount;
+            this.orderList.oid = data.order.oid;
+            this.orderDetail = data.order_detail;
             console.log(data);
           })
           .catch(error => {
@@ -281,106 +305,157 @@ export default {
     },
     // 点击修改按钮
     updateTableDetail() {
-      this.newTime =  Number(new Date());
-      this.orderList.startTime = Number(new Date())
-      console.log(this.newTime)
+      this.newTime = Number(new Date());
+      this.orderList.startTime = Number(new Date());
       this.dialogVisible = true;
     },
     // 修改桌台
-    updatePost($status,formName,formName2){
+    updatePost($status, formName, formName2) {
       this.reservationList.contactTime = this.newTime;
-      this.reservationList.dinnerTime = Number(this.reservationList.dinnerTime);
       this.reservationList.tableId = this.tableChildList.tid;
-      // this.orderList.startTime = ;
       this.orderList.endTime = this.orderList.startTime + 2400000;
-      if($status == 1){
-        var url = this.$store.state.globalSettings.apiUrl+'/admin/table/'+this.tableChildList.tid;
-        this.$axios.delete(url).then(({data})=>{
-          if(data.order.code == 200 || data.reservation.code == 200){
-            this.tableChildList.status = 1;
-            this.dialogVisible = false;
-            this.$alert("桌台修改成功！", {
-                  confirmButtonText: "确定",
-                  callback: action => {
-                    this.$message({
-                      type: "info"
-                    });
-                    // this.$router.go(0);
-                  }
-                });
-          }else{
-            this.$message.error("修改桌台失败！请核对信息是否正确！");
-          }
-        }).catch(error=>{
-          console.log(error);
-        })
+      if ($status == 1) {
+        var url =
+          this.$store.state.globalSettings.apiUrl +
+          "/admin/table/" +
+          this.tableChildList.tid;
+        this.$axios
+          .delete(url)
+          .then(({ data }) => {
+            if (data.order.code == 200 || data.reservation.code == 200) {
+              this.tableChildList.status = 1;
+              this.dialogVisible = false;
+              this.$alert("桌台修改成功！", {
+                confirmButtonText: "确定",
+                callback: action => {
+                  this.$message({
+                    type: "info"
+                  });
+                  // this.$router.go(0);
+                }
+              });
+            } else {
+              this.$message.error("修改桌台失败！请核对信息是否正确！");
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
       }
-      if($status == 2){
-        console.log(this.reservationList)
-        this.$refs[formName].validate((valid) => {
+      if ($status == 2) {
+        this.$refs[formName].validate(valid => {
           if (valid) {
-            console.log(1)
-            var url = this.$store.state.globalSettings.apiUrl+'/admin/table/reservation/'+this.tableChildList.tid;
-            this.$axios.put(url,this.reservationList).then(({data})=>{
-              if(data.code == 200){
-                this.tableChildList.status = 2;
-                this.dialogVisible = false;
-                this.$alert("桌台修改成功！", {
-                  confirmButtonText: "确定",
-                  callback: action => {
-                    this.$message({
-                      type: "info"
+            const h = this.$createElement;
+            this.$msgbox({
+              title: "消息",
+              message: h("p", null, [
+                h("span", null, "您确定要 "),
+                h("i", { style: "color: teal" }, "修改桌台"),
+                h("span", null, " 吗？")
+              ]),
+              showCancelButton: true,
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              beforeClose: (action, instance, done) => {
+                if (action === "confirm") {
+                  instance.confirmButtonLoading = true;
+                  instance.confirmButtonText = "修改中...";
+                  var url =
+                    this.$store.state.globalSettings.apiUrl +
+                    "/admin/table/reservation/" +
+                    this.tableChildList.tid;
+                  this.reservationList.dinnerTime = Number(
+                    this.reservationList.dinnerTime
+                  );
+                  this.$axios
+                    .put(url, this.reservationList)
+                    .then(({ data }) => {
+                      if (data.code == 200) {
+                        this.tableChildList.status = 2;
+                        this.dialogVisible = false;
+                        // this.$alert("桌台修改成功！", {
+                        //   confirmButtonText: "确定",
+                        //   callback: action => {
+                        //     this.$message({
+                        //       type: "info"
+                        //     });
+                        //   }
+                        // });
+                      } else {
+                        this.$message.error(
+                          "修改桌台失败！请核对信息是否正确！"
+                        );
+                      }
+                    })
+                    .catch(error => {
+                      console.log(error);
                     });
-                  }
-                });
-              }else{
-                this.$message.error("修改桌台失败！请核对信息是否正确！");
+                  setTimeout(() => {
+                    done();
+                    setTimeout(() => {
+                      instance.confirmButtonLoading = false;
+                    }, 300);
+                  }, 1000);
+                } else {
+                  done();
+                }
               }
-            }).catch(error=>{
-              console.log(error);
             })
+              .then(action => {
+                this.$message({
+                  type: "info",
+                  message: "桌台修改成功！"
+                });
+              })
+              .catch(error => {
+                console.log(error);
+              });
           } else {
             this.$message.error("修改桌台失败！请正确填写信息！");
             return false;
           }
         });
-        
       }
-      if($status == 3){
-        this.$refs[formName2].validate((valid) => {
+      if ($status == 3) {
+        this.$refs[formName2].validate(valid => {
           if (valid) {
-            var url = this.$store.state.globalSettings.apiUrl+'/admin/table/order/'+this.tableChildList.tid;
-            this.$axios.put(url,this.orderList).then(({data})=>{
-              if(data.code == 200){
-                this.tableChildList.status = 3;
-                this.dialogVisible = false;
-                this.$alert("桌台修改成功！", {
-                  confirmButtonText: "确定",
-                  callback: action => {
-                    this.$message({
-                      type: "info"
-                    });
-                    this.$router.go(0);
-                  }
-                });
-              }else{
-                this.$message.error("修改桌台失败！请核对信息是否正确！");
-              }
-            }).catch(error=>{
-              console.log(error);
-            })
+            var url =
+              this.$store.state.globalSettings.apiUrl +
+              "/admin/table/order/" +
+              this.tableChildList.tid;
+            this.$axios
+              .put(url, this.orderList)
+              .then(({ data }) => {
+                if (data.code == 200) {
+                  this.tableChildList.status = 3;
+                  this.dialogVisible = false;
+                  this.$alert("桌台修改成功！", {
+                    confirmButtonText: "确定",
+                    callback: action => {
+                      this.$message({
+                        type: "info"
+                      });
+                      this.$router.go(0);
+                    }
+                  });
+                } else {
+                  this.$message.error("修改桌台失败！请核对信息是否正确！");
+                }
+              })
+              .catch(error => {
+                console.log(error);
+              });
           } else {
             this.$message.error("修改桌台失败！请正确填写信息！");
             return false;
           }
         });
-        
       }
     },
     // 点击dialogVisible取消按钮
-    closeForm(){
-      this.dialogVisible=false;
-      this.$refs['tableForm'].resetFields();
+    closeForm() {
+      this.dialogVisible = false;
+      this.$refs["tableForm"].resetFields();
       // this.$router.go(0);
       // this.tableChildList.status = this.data.status;
       // console.log(this.initialTableList)
@@ -396,7 +471,9 @@ export default {
       var qrcode = require("qrcode");
       var canvas = document.getElementById("qrcanvas");
       var tableUrl =
-        this.$store.state.globalSettings.apiUrl + "/#/" + this.tableChildList.tid;
+        this.$store.state.globalSettings.apiUrl +
+        "/#/" +
+        this.tableChildList.tid;
       // 把绘制得到的图片二维码数据转为Base64编码的字符串
       qrcode.toDataURL(
         tableUrl,
@@ -431,7 +508,7 @@ export default {
       margin-left: 100px;
     }
   }
-  .el-radio{
+  .el-radio {
     margin-right: 0;
   }
 }
