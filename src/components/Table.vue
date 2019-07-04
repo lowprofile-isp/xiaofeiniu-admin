@@ -59,7 +59,7 @@
                 <el-row>
                   <el-col :span="8">
                     <el-card class="xfn-dish">
-                      <img>
+                      <img />
                       <el-badge :value="12" class="item dish-count" type="success"></el-badge>
                     </el-card>
                   </el-col>
@@ -67,7 +67,7 @@
               </el-form-item>
             </div>
             <div v-if="qita">
-              <p>{{qitaInfo}}</p>
+              <p>{{qitaInfo.str}}</p>
             </div>
           </el-form>
         </el-tab-pane>
@@ -83,6 +83,7 @@
     </el-dialog>
 
     <el-dialog :title="tableChildList.tid+'桌状态修改'" :visible.sync="dialogVisible">
+      <!-- 表单2验证 -->
       <el-form :model="reservationList" :rules="rules1" ref="tableForm">
         <el-form-item label="桌台状态：">
           <el-radio-group v-model="radio1">
@@ -110,6 +111,9 @@
             <el-input v-model="reservationList.phone" placeholder="预约人联系电话"></el-input>
           </el-form-item>
         </div>
+        <!-- 表单2验证end -->
+
+        <!-- 表单3验证 -->
         <el-form :model="orderList" v-if="radio1 == '3'" :rules="rules2" ref="tableForm2">
           <el-form-item prop="startTime" label="用餐时间：">
             <el-date-picker
@@ -122,8 +126,21 @@
             <el-input v-model.number="orderList.customerCount" placeholder="用餐人数"></el-input>
           </el-form-item>
         </el-form>
+        <!-- 表单3验证end -->
+
+        <!-- 表单4验证 -->
+        <el-form :model="qitaInfo" v-if="radio1 == '4'" :rules="rules3" ref="tableForm3">
+          <el-form-item label="桌台详情：" prop="str">
+            <el-input v-model="qitaInfo.str" placeholder="请填写桌台详细信息">{{qitaInfo.str}}</el-input>
+          </el-form-item>
+        </el-form>
+        <!-- 表单4验证end -->
+
         <el-form-item>
-          <el-button type="primary" @click="updatePost(radio1,'tableForm','tableForm2')">确 定</el-button>
+          <el-button
+            type="primary"
+            @click="updatePost(radio1,'tableForm','tableForm2','tableForm3')"
+          >确 定</el-button>
           <el-button @click="closeForm">取 消</el-button>
         </el-form-item>
       </el-form>
@@ -135,27 +152,29 @@ import { error } from "util";
 import { type } from "os";
 export default {
   data() {
-    var phone = (rule, value, callback) => {
+    var phone = (rule, value, callback) => {    //手机号正则验证
       if (!value) {
         return callback(new Error("手机号不能为空"));
       }
-      let phone_tes = /^1[34578]\d{9}$/;
+      let phone_tes = /^1[3456789]\d{9}$/;
       if (!phone_tes.test(value)) {
         return callback(new Error("请输入正确手机号"));
       }
       callback();
     };
     return {
-      radio1: 1,
-      yuding: false,
-      zhanyong: false,
-      qita: false,
-      qitaInfo: "提示：本桌台处于维修状态",
-      dialogTableDetailVisible: false,
-      dialogVisible: false,
-      qrcodeData: "",
-      tableChildList: this.data,
-      reservationList: {
+      radio1: 1,                          //单选框选项状态
+      yuding: false,                      //预定桌台
+      zhanyong: false,                    //占用桌台
+      qita: false,                        //其他桌台
+      qitaInfo: {                         //其他桌台信息
+        str: "提示：本桌台处于维修状态"
+      },
+      dialogTableDetailVisible: false,    //详情模态框
+      dialogVisible: false,               //修改模态框
+      qrcodeData: "",                     //二维码
+      tableChildList: this.data,          //桌台列表
+      reservationList: {                  //预约列表
         rid: null,
         contactName: "",
         phone: "",
@@ -164,15 +183,18 @@ export default {
         dinnerTime: "",
         tableId: ""
       },
-      orderList: {
+      orderList: {               //订单列表
         oid: null,
         startTime: "",
         endTime: "",
         customerCount: "",
         tableId: ""
       },
-      orderDetail: [],
-      newTime: "",
+      orderDetail: [],           //订单详情列表
+      dishListId:[],
+      newTime: "",               //当前本地时间
+
+      // 预约桌台表单验证
       rules1: {
         dinnerTime: [
           {
@@ -198,6 +220,7 @@ export default {
           }
         ]
       },
+      // 占用桌台表单验证
       rules2: {
         customerCount: [
           { required: true, message: "请填写用餐人数", trigger: "blur" },
@@ -217,11 +240,16 @@ export default {
             trigger: "change"
           }
         ]
+      },
+      // 其他桌台表单验证
+      rules3: {
+        str: {
+          required: true,
+          message: "请填写桌台详细信息",
+          trigger: "blur"
+        }
       }
     };
-  },
-  mounted() {
-
   },
   methods: {
     // 根据status返回不同的颜色值
@@ -236,6 +264,7 @@ export default {
         return "#909399";
       }
     },
+
     // 根据status返回不同的状态
     getTableInfos(status) {
       if (status == 1) {
@@ -248,11 +277,14 @@ export default {
         return false;
       }
     },
+
     // 点击详情按钮
     showTableDetail($status) {
-      console.log($status);
-      this.dialogTableDetailVisible = true;
+      if ($status == 1) {
+        this.dialogTableDetailVisible = true;
+      }
       if ($status == 2) {
+        this.dialogTableDetailVisible = true;
         this.yuding = true;
         this.zhanyong = false;
         this.qita = false;
@@ -275,9 +307,6 @@ export default {
           });
       }
       if ($status == 3) {
-        this.yuding = false;
-        this.zhanyong = true;
-        this.qita = false;
         var url =
           this.$store.state.globalSettings.apiUrl +
           "/admin/table/order/" +
@@ -285,35 +314,53 @@ export default {
         this.$axios
           .get(url)
           .then(({ data }) => {
-            this.orderList.startTime = data.order.startTime;
-            this.orderList.endTime = data.order.endTime;
-            this.orderList.tableId = data.order.tableId;
-            this.orderList.customerCount = data.order.customerCount;
-            this.orderList.oid = data.order.oid;
-            this.orderDetail = data.order_detail;
             console.log(data);
+            if (data.code == 400) {
+              this.dialogTableDetailVisible = false;
+              this.$alert("暂无订单详情！", {
+                confirmButtonText: "确定"
+              });
+            } else {
+              this.dialogTableDetailVisible = true;
+              this.yuding = false;
+              this.zhanyong = true;
+              this.qita = false;
+              this.orderList.startTime = data.order.startTime;
+              this.orderList.endTime = data.order.endTime;
+              this.orderList.tableId = data.order.tableId;
+              this.orderList.customerCount = data.order.customerCount;
+              this.orderList.oid = data.order.oid;
+              this.orderDetail = data.order_detail;
+              this.dishListId = data.order_detail_dish_did;
+              this.$axios.post(this.$store.state.globalSettings.apiUrl+'/admin/dish/orderDetailDish',{'dishId':this.dishListId}).then(({data})=>{
+                // console.log(data)
+              }).catch(error=>{
+                console.log(error)
+              })
+            }
           })
           .catch(error => {
             console.log(error);
           });
       }
       if ($status == 4) {
+        this.dialogTableDetailVisible = true;
         this.qita = true;
         this.yuding = false;
         this.zhanyong = false;
       }
     },
+
     // 点击修改按钮
     updateTableDetail() {
       this.newTime = Number(new Date());
       this.orderList.startTime = Number(new Date());
       this.dialogVisible = true;
     },
-    // 修改桌台
-    updatePost($status, formName, formName2) {
-      this.reservationList.contactTime = this.newTime;
-      this.reservationList.tableId = this.tableChildList.tid;
-      this.orderList.endTime = this.orderList.startTime + 2400000;
+
+    // 点击修改确定按钮
+    updatePost($status, formName, formName2, formName3) {
+      // 空闲桌台
       if ($status == 1) {
         var url =
           this.$store.state.globalSettings.apiUrl +
@@ -326,13 +373,7 @@ export default {
               this.tableChildList.status = 1;
               this.dialogVisible = false;
               this.$alert("桌台修改成功！", {
-                confirmButtonText: "确定",
-                callback: action => {
-                  this.$message({
-                    type: "info"
-                  });
-                  // this.$router.go(0);
-                }
+                confirmButtonText: "确定"
               });
             } else {
               this.$message.error("修改桌台失败！请核对信息是否正确！");
@@ -342,7 +383,10 @@ export default {
             console.log(error);
           });
       }
+      // 预约桌台
       if ($status == 2) {
+        this.reservationList.contactTime = this.newTime;
+        this.reservationList.tableId = this.tableChildList.tid;
         this.$refs[formName].validate(valid => {
           if (valid) {
             const h = this.$createElement;
@@ -373,14 +417,6 @@ export default {
                       if (data.code == 200) {
                         this.tableChildList.status = 2;
                         this.dialogVisible = false;
-                        // this.$alert("桌台修改成功！", {
-                        //   confirmButtonText: "确定",
-                        //   callback: action => {
-                        //     this.$message({
-                        //       type: "info"
-                        //     });
-                        //   }
-                        // });
                       } else {
                         this.$message.error(
                           "修改桌台失败！请核对信息是否正确！"
@@ -416,7 +452,10 @@ export default {
           }
         });
       }
+      // 占用桌台
       if ($status == 3) {
+        this.orderList.tableId = this.tableChildList.tid;
+        this.orderList.endTime = this.orderList.startTime + 2400000;
         this.$refs[formName2].validate(valid => {
           if (valid) {
             var url =
@@ -432,9 +471,6 @@ export default {
                   this.$alert("桌台修改成功！", {
                     confirmButtonText: "确定",
                     callback: action => {
-                      this.$message({
-                        type: "info"
-                      });
                       this.$router.go(0);
                     }
                   });
@@ -451,20 +487,48 @@ export default {
           }
         });
       }
+      // 其他桌台
+      if ($status == 4) {
+        this.$refs[formName3].validate(valid => {
+          if (valid) {
+            var url =
+              this.$store.state.globalSettings.apiUrl +
+              "/admin/table/qitainfo/" +
+              this.tableChildList.tid;
+            this.$axios
+              .put(url)
+              .then(({ data }) => {
+                if (data.code == 200) {
+                  this.tableChildList.status = 4;
+                  this.dialogVisible = false;
+                  this.$alert("桌台修改成功！", {
+                    confirmButtonText: "确定"
+                  });
+                } else {
+                  this.$message.error("修改桌台失败！请填写桌台详情！");
+                }
+              })
+              .catch(error => {
+                console.log(error);
+              });
+          } else {
+            this.$message.error("修改桌台失败！请填写桌台详情！");
+          }
+        });
+      }
     },
+
     // 点击dialogVisible取消按钮
     closeForm() {
       this.dialogVisible = false;
       this.$refs["tableForm"].resetFields();
-      // this.$router.go(0);
-      // this.tableChildList.status = this.data.status;
-      // console.log(this.initialTableList)
-      // console.log(this.tableChildList)
     },
+
     // 点击closeDetailTableDetail取消按钮
     closeDetailTableDetail() {
       this.dialogTableDetailVisible = false;
     },
+
     // 桌台二维码
     makeQRCode() {
       //创建二维码——此方法不能再当前组件的mounted中调用，因为绘图必须得canvas在el-dialog中，对话框在组件加载时并不在DOM树上
