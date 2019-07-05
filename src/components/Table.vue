@@ -49,7 +49,7 @@
               <el-form-item label="用餐人数：">
                 <el-tag type="info">{{orderList.customerCount}}人</el-tag>
               </el-form-item>
-              <el-form-item label="下单人：">
+              <el-form-item type="danger" label="下单人：">
                 <el-tag type="info">{{orderDetail[0].customerName}}</el-tag>
               </el-form-item>
               <el-form-item label="用餐时间：">

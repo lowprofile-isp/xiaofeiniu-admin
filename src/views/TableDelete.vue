@@ -19,7 +19,7 @@
         ref="deleteData"
       >
         <el-form-item label="桌台编号/桌台名称" prop="tableInfo">
-          <el-input v-model="formData.tableInfo"></el-input>
+          <el-input v-model="formData.tableInfo" placeholder="请输入要删除的桌台编号或桌名"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="deleteTable('deleteData')">删除</el-button>

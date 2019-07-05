@@ -9,7 +9,7 @@
     <br>
     <el-form label-width="100px" ref="formTable" :rules="rules1" :model="table">
       <el-form-item label="桌台名称" prop="tname">
-        <el-input placeholder="请输入桌台名称" v-model="table.tname"></el-input>
+        <el-input placeholder="给桌台取个喜庆吉利的名字吧" v-model="table.tname"></el-input>
       </el-form-item>
       <el-form-item label="桌台类别" prop="type">
         <el-radio-group v-model="table.type">
