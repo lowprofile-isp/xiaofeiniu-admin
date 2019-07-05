@@ -2,10 +2,9 @@
   <div class="xfn-category-list">
     <el-breadcrumb>
       <el-breadcrumb-item to="/main">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>菜品类别管理</el-breadcrumb-item>
-      <el-breadcrumb-item>菜品列表</el-breadcrumb-item>
+      <el-breadcrumb-item>菜品类别</el-breadcrumb-item>
     </el-breadcrumb>
-
+    <br>
     <el-button type="primary" style="margin:.7em;padding: 7px 15px;" plain @click="addCategory">
       <i class="el-icon-plus"></i> 添加新的菜品类别
     </el-button>

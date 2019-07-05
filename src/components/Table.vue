@@ -57,10 +57,12 @@
               </el-form-item>
               <el-form-item label="用餐菜单：">
                 <el-row>
-                  <el-col :span="8">
+                  <el-col :span="8" v-for="(d,i) in orderDetailDish" :key="i">
                     <el-card class="xfn-dish">
-                      <img />
-                      <el-badge :value="12" class="item dish-count" type="success"></el-badge>
+                      <img :src="require('../../../xiaofeiniu-api/img/dish/'+d.imgUrl)">
+                      {{d.title}}
+                      <!-- <p>{{d.title}}</p> -->
+                      <!-- <el-badge :value="12" class="item dish-count" type="success"></el-badge> -->
                     </el-card>
                   </el-col>
                 </el-row>
@@ -148,8 +150,6 @@
   </div>
 </template>
 <script>
-import { error } from "util";
-import { type } from "os";
 export default {
   data() {
     var phone = (rule, value, callback) => {    //手机号正则验证
@@ -191,6 +191,7 @@ export default {
         tableId: ""
       },
       orderDetail: [],           //订单详情列表
+      orderDetailDish:[],        //订单详情菜品列表
       dishListId:[],
       newTime: "",               //当前本地时间
 
@@ -333,7 +334,9 @@ export default {
               this.orderDetail = data.order_detail;
               this.dishListId = data.order_detail_dish_did;
               this.$axios.post(this.$store.state.globalSettings.apiUrl+'/admin/dish/orderDetailDish',{'dishId':this.dishListId}).then(({data})=>{
-                // console.log(data)
+                console.log(data)
+                this.orderDetailDish = data.infos;
+                console.log(this.orderDetailDish)
               }).catch(error=>{
                 console.log(error)
               })
@@ -470,9 +473,6 @@ export default {
                   this.dialogVisible = false;
                   this.$alert("桌台修改成功！", {
                     confirmButtonText: "确定",
-                    callback: action => {
-                      this.$router.go(0);
-                    }
                   });
                 } else {
                   this.$message.error("修改桌台失败！请核对信息是否正确！");
@@ -547,6 +547,15 @@ export default {
         }
       );
     }
+
+    
+    // [
+    //   {dishId:'2',imgUrl:'',dishCount:'',custName:''},
+    //   {dishId:'6',imgUrl:'',dishCount:'',custName:''},
+    //   {dishId:'5',imgUrl:'',dishCount:'',custName:''},
+    //   {dishId:'3',imgUrl:'',dishCount:'',custName:''},
+    //   {dishId:'7',imgUrl:'',dishCount:'',custName:''},
+    // ]
   },
   props: ["data"]
 };
@@ -574,6 +583,16 @@ export default {
   }
   .el-radio {
     margin-right: 0;
+  }
+  .xfn-dish{
+    .el-card__body {
+    padding: 10px;
+    line-height: 28px;
+      img{
+        max-width:100px;
+        vertical-align: middle;
+      }
+    }
   }
 }
 </style>

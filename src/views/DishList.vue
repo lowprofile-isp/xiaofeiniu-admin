@@ -5,6 +5,8 @@
       <el-breadcrumb-item>菜品类别管理</el-breadcrumb-item>
       <el-breadcrumb-item>菜品列表</el-breadcrumb-item>
     </el-breadcrumb>
+    <br>
+    <br>
     <el-tabs type="border-card">
       <el-tab-pane v-for="(c,i) in dishList" :key="i">
         <span slot="label">

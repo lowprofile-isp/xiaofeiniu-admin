@@ -190,9 +190,6 @@ export default {
                 this.$alert("菜品修改成功！", {
                   confirmButtonText: "确定",
                   callback: action => {
-                    this.$message({
-                      type: "info"
-                    });
                     this.$router.go(0);
                   }
                 });

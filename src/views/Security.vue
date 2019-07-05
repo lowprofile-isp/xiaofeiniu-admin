@@ -1,5 +1,10 @@
 <template>
   <div class="xfn-security">
+    <el-breadcrumb>
+      <el-breadcrumb-item to="/main">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>安全管理</el-breadcrumb-item>
+    </el-breadcrumb>
+    <br>
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>安全管理</span>

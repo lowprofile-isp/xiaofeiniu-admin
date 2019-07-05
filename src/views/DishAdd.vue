@@ -5,6 +5,8 @@
       <el-breadcrumb-item>菜品类别管理</el-breadcrumb-item>
       <el-breadcrumb-item>添加菜品</el-breadcrumb-item>
     </el-breadcrumb>
+    <br>
+    <br>
     <el-form label-width="100px" ref="formData" :rules="rules" :model="formData">
       <el-form-item label="菜品图片" prop="imgUrl">
         <el-upload
@@ -19,7 +21,7 @@
           <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过500kb</div>
         </el-upload>
       </el-form-item>
-      <el-form-item label="主标题" prop="title">
+      <el-form-item label="菜名" prop="title">
         <el-input placeholder="请输入菜品主标题" v-model="formData.title"></el-input>
       </el-form-item>
       <el-form-item label="所属类别">
@@ -107,9 +109,6 @@ export default {
                 this.$alert("菜品添加成功！", {
                   confirmButtonText: "确定",
                   callback: action => {
-                    this.$message({
-                      type: "info"
-                    });
                     this.$router.go(0);
                   }
                 });

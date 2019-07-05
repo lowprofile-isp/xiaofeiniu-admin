@@ -5,6 +5,7 @@
       <el-breadcrumb-item>菜品类别管理</el-breadcrumb-item>
       <el-breadcrumb-item>删除菜品</el-breadcrumb-item>
     </el-breadcrumb>
+    <br>
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>根据（菜品编号/菜品名称）删除菜品</span>
