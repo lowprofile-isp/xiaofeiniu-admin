@@ -59,7 +59,7 @@ export default {
             .then(() => {
               var url =
                 this.$store.state.globalSettings.apiUrl +
-                "/admin/table/" +
+                "/admin/table/delTab/" +
                 this.formData.tableInfo;
               this.$axios
                 .delete(url)

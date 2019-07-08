@@ -36,7 +36,7 @@
           name="dishImg"
           :before-upload="beforeAvatarUpload"
         >
-          <img v-if="imageUrl" :src="imageUrl">
+          <img v-if="imageUrl" :src="require('../../../xiaofeiniu-api/img/dish/'+imageUrl)">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过500kb</div>
         </el-upload>
@@ -121,7 +121,6 @@ export default {
       //res 服务器端返回的响应消息
       //file 从input[type=file] 中读取的第一个上传的文件对象
       this.formInfos.imgUrl = res.fileName;
-      this.imageUrl = res.fileName;
       this.imageUrl = URL.createObjectURL(file.raw); //把上传的文件编码转为DataURL字符串
     },
     beforeAvatarUpload(file) {
@@ -161,7 +160,7 @@ export default {
               this.formInfos.title = data.infos.title;
               this.formInfos.price = data.infos.price;
               this.formInfos.detail = data.infos.detail;
-              this.formInfos.imgUrl = data.infos.imgUrl;
+              // this.formInfos.imgUrl = data.infos.imgUrl;
               // this.imageUrl = require("../../../xiaofeiniu-api/img/dish/"+data.infos.imgUrl);
               this.imageUrl = data.infos.imgUrl;
               this.radio1 = data.infos.categoryId - 1;

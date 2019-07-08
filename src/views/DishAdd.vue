@@ -16,7 +16,7 @@
           name="dishImg"
           :before-upload="beforeAvatarUpload"
         >
-          <img v-if="imageUrl" :src="imageUrl">
+          <img v-if="imageUrl" :src="require('../../../xiaofeiniu-api/img/dish/'+imageUrl)">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           <div slot="tip" class="el-upload__tip">只能上传jpg文件，且不超过500kb</div>
         </el-upload>
